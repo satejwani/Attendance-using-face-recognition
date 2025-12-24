@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Registration</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        width: 80vw;
+        display: flex;
+        gap: 20px;
+      }
+
+      .left-panel {
+        flex: 1;
+        padding: 10px;
+      }
+
+      .right-panel {
+        flex: 1;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      input,
+      button {
+        margin: 10px;
+        padding: 10px;
+        width: 90%;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+      }
+
+      input {
+        border: 1px solid #ccc;
+      }
+
+      .capture {
+        background-color: #28a745;
+        color: white;
+        cursor: pointer;
+      }
+
+      .save {
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      .new-picture {
+        background-color: #ffc107;
+        color: black;
+        cursor: pointer;
+      }
+
+      .back {
+        background-color: #dc3545;
+        color: white;
+        cursor: pointer;
+      }
+
+      #video,
+      #preview {
+        border: 1px solid grey;
+        border-radius: 5px;
+        margin: 10px 0;
+      }
+
+      .preview-label {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .preview-info {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+        width: 90%;
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        gap: 10px;
+      }
+
+      button:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left-panel">
+        <h2>New Registration</h2>
+        <input type="text" id="fullname" placeholder="Full Name" />
+        <input type="text" id="id" placeholder="ID" />
+        <video id="video" width="400" height="300" autoplay></video>
+        <button class="capture" onclick="captureImage()">Capture Image</button>
+        <button class="save" onclick="saveProfile()">Save Profile</button>
+      </div>
+      <div class="right-panel">
+        <p class="preview-label">Captured Image Preview</p>
+        <img id="preview" width="400" height="300" style="display: none" />
+        <div id="preview-info" class="preview-info" style="display: none">
+          <p><strong>Name:</strong> <span id="preview-name"></span></p>
+          <p><strong>ID:</strong> <span id="preview-id"></span></p>
+        </div>
+        <div class="button-group">
+          <button
+            class="new-picture"
+            onclick="newPicture()"
+            style="display: none"
+          >
+            Take New Picture
+          </button>
+          <button class="back" onclick="window.location.href='/'">
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="canvas" style="display: none"></canvas>
+
+    <script>
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const preview = document.getElementById("preview");
+      const previewInfo = document.getElementById("preview-info");
+      const previewName = document.getElementById("preview-name");
+      const previewId = document.getElementById("preview-id");
+      const newPictureBtn = document.querySelector(".new-picture");
+      const context = canvas.getContext("2d");
+
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          video.srcObject = stream;
+        })
+        .catch((error) => console.error("Error accessing webcam: ", error));
+
+      function captureImage() {
+        const fullname = document.getElementById("fullname").value.trim();
+        const id = document.getElementById("id").value.trim();
+
+        if (!fullname || !id) {
+          alert("Please enter Full Name and ID before capturing");
+          return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Display the captured image and info
+        const imageData = canvas.toDataURL("image/png");
+        preview.src = imageData;
+        preview.style.display = "block";
+        previewName.textContent = fullname;
+        previewId.textContent = id;
+        previewInfo.style.display = "block";
+        newPictureBtn.style.display = "block";
+
+        alert("Image Captured!");
+      }
+
+      function newPicture() {
+        preview.style.display = "none";
+        previewInfo.style.display = "none";
+        newPictureBtn.style.display = "none";
+      }
+
+      function saveProfile() {
+        const fullname = document.getElementById("fullname").value.trim();
+        const id = document.getElementById("id").value.trim();
+        if (!fullname || !id) {
+          alert("Please enter Full Name and ID");
+          return;
+        }
+        if (preview.style.display === "none") {
+          alert("Please capture an image first");
+          return;
+        }
+        const imageData = canvas.toDataURL("image/png");
+        fetch("http://127.0.0.1:5000/saveProfile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: id,
+            fullname: fullname,
+            image: imageData,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            alert(data.message || data.error);
+            if (data.message) {
+              // Clear everything for new entry instead of redirecting
+              document.getElementById("fullname").value = "";
+              document.getElementById("id").value = "";
+              preview.style.display = "none";
+              previewInfo.style.display = "none";
+              newPictureBtn.style.display = "none";
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              document.getElementById("fullname").focus();
+            }
+          })
+          .catch((error) => {
+            console.error("Error saving profile:", error);
+            alert("Error saving profile. Please try again.");
+          });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+pip install Flask flask-cors opencv-python numpy face-recognition dlib pymongo dnspython
