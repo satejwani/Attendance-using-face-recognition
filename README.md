@@ -30,6 +30,17 @@ attendance-system/
 └── requirements.txt       # Project dependencies
 '''
 
+```
+attendance-system/
+├──  attendance_system.py     # Main application file
+├── db_operations.py          # Database CRUD operations
+├── index.html                # Attendance marking UI
+├── registration.html         # Student registration UI
+├── student_images/           # Stored student face images
+├── attendance.csv            # Attendance records
+└── requirements.txt          # Project dependencies        
+```
+
 
 ## ⚙️ Installation
 pip install -r requirements.txt
