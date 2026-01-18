@@ -19,16 +19,6 @@ The system allows student registration via webcam image capture and automaticall
 - Language: Python
 
 ## 📂 Project Structure
-'''
-attendance-system/
-├── attendance_system.py   # Main application file
-├── db_operations.py       # Database CRUD operations
-├── index.html             # Attendance marking UI
-├── registration.html      # Student registration UI
-├── student_images/        # Stored student face images
-├── attendance.csv         # Attendance records
-└── requirements.txt       # Project dependencies
-'''
 
 ```
 attendance-system/
@@ -43,13 +33,15 @@ attendance-system/
 
 
 ## ⚙️ Installation
+```
 pip install -r requirements.txt
+```
 
 ## ▶️ Run
+```
 python attendance_system.py
-
 Open http://127.0.0.1:5000/
-
+```
 ## 📜 License
 MIT License
 
