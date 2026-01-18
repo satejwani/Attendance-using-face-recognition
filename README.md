@@ -21,14 +21,15 @@ The system allows student registration via webcam image capture and automaticall
 ## 📂 Project Structure
 '''
 attendance-system/
-  ├── attendance_sysytem.py
-  ├── db_operations.py
-  ├── requirements.txt
-  ├── index.html
-  ├── registration.html
-  ├── student_images/
-  ├── attendance.csv
+├── attendance_system.py   # Main application file
+├── db_operations.py       # Database CRUD operations
+├── index.html             # Attendance marking UI
+├── registration.html      # Student registration UI
+├── student_images/        # Stored student face images
+├── attendance.csv         # Attendance records
+└── requirements.txt       # Project dependencies
 '''
+
 
 ## ⚙️ Installation
 pip install -r requirements.txt
